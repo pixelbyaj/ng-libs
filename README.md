@@ -1,5 +1,8 @@
 # NgLibs
 
+## ngrx-event-bus
+[![npm](https://img.shields.io/npm/dt/ngrx-event-bus.svg)](https://www.npmjs.com/package/ngrx-event-bus)
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.0.3.
 
 ## Development server
