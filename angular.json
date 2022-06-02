@@ -3,5 +3,140 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-  }
+    "ngrx-event-bus": {
+      "projectType": "library",
+      "root": "projects/ngrx-event-bus",
+      "sourceRoot": "projects/ngrx-event-bus/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/ngrx-event-bus/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/ngrx-event-bus/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/ngrx-event-bus/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/ngrx-event-bus/src/test.ts",
+            "tsConfig": "projects/ngrx-event-bus/tsconfig.spec.json",
+            "karmaConfig": "projects/ngrx-event-bus/karma.conf.js"
+          }
+        }
+      }
+    },
+    "rxbus": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        },
+        "@schematics/angular:application": {
+          "strict": true
+        }
+      },
+      "root": "projects/rxbus",
+      "sourceRoot": "projects/rxbus/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/rxbus",
+            "index": "projects/rxbus/src/index.html",
+            "main": "projects/rxbus/src/main.ts",
+            "polyfills": "projects/rxbus/src/polyfills.ts",
+            "tsConfig": "projects/rxbus/tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              "projects/rxbus/src/favicon.ico",
+              "projects/rxbus/src/assets"
+            ],
+            "styles": [
+              "projects/rxbus/src/styles.scss"
+            ],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "1mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kb",
+                  "maximumError": "4kb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "projects/rxbus/src/environments/environment.ts",
+                  "with": "projects/rxbus/src/environments/environment.prod.ts"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "production": {
+              "browserTarget": "rxbus:build:production"
+            },
+            "development": {
+              "browserTarget": "rxbus:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "rxbus:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/rxbus/src/test.ts",
+            "polyfills": "projects/rxbus/src/polyfills.ts",
+            "tsConfig": "projects/rxbus/tsconfig.spec.json",
+            "karmaConfig": "projects/rxbus/karma.conf.js",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              "projects/rxbus/src/favicon.ico",
+              "projects/rxbus/src/assets"
+            ],
+            "styles": [
+              "projects/rxbus/src/styles.scss"
+            ],
+            "scripts": []
+          }
+        }
+      }
+    }
+  },
+  "defaultProject": "ngrx-event-bus"
 }
