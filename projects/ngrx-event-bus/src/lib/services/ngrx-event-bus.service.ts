@@ -107,9 +107,6 @@ export class NgRxEventBusService {
       index = _index;
       return event === item.event;
     });
-    if(resp === undefined){
-      index = 0;
-    }
     return index;
   }
   //#endregion
