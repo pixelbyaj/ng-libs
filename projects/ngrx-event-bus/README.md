@@ -87,6 +87,13 @@ With this release you can able to get First, Last and All values with your first
         }
     */
 ``` 
+## What is new in 2.1.5 ?
+With this release user can now soft unregister the event and later it register the same and the component which already subscribed to the respective event can again get the emitted results.
+```typescript
+//@Param1 IEvent
+//@Param2 soft. By default this parameter will remain false.
+this.eventBus.unregisterEvent(BusEvents.TitleChangeEvent,true)
+```
 ## Thumb Rules
 1. Event class should implements by IEvent.
 2. Declare static string under Event Class.
