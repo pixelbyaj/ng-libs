@@ -10,7 +10,7 @@ export class AppComponent {
   i: number = 0;
   title = 'rxbus'
   constructor(private eventBus: NgRxEventBusService) {
-    // this.eventBus.registerEvent(BusEvents.CustomerChangeEvent,{name:"abhishek default"});
+    this.eventBus.registerEvent(BusEvents.CustomerChangeEvent,{name:"abhishek default"});
   }
   ngOnInit() {
     this.eventBus.emit(new EmitEvent(BusEvents.CustomerChangeEvent, { name: 'abhishek1' }));
@@ -22,6 +22,12 @@ export class AppComponent {
   change($event) {
     this.eventBus.emit(new EmitEvent(BusEvents.CustomerChangeEvent, { name: $event.target.value }));
 
+  }
+  Register(){
+    this.eventBus.registerEvent(BusEvents.CustomerChangeEvent);
+  }
+  UnRegister(){
+    this.eventBus.unregisterEvent(BusEvents.CustomerChangeEvent,true);
   }
 }
 

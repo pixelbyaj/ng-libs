@@ -1,18 +1,18 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Subject, Subscription } from 'rxjs';
-import {IEvent}  from '../interface/IEvent';
-import {IEventRegister}  from '../interface/IEventRegister';
-import {EmitEvent,EmitRecord} from '../interface/Event';
+import { IEvent } from '../interface/IEvent';
+import { IEventRegister } from '../interface/IEventRegister';
+import { EmitEvent, EmitRecord } from '../interface/Event';
 
 @Injectable({
   providedIn: 'root'
 })
 export class NgRxEventBusService {
 
-  private eventRegister: IEventRegister[];
+  private eventRegister: Map<IEvent, IEventRegister>;
   private eventLastEmitted = {};
   constructor() {
-    this.eventRegister = [];
+    this.eventRegister = new Map<IEvent, IEventRegister>();
   }
 
   //#region Public
@@ -22,22 +22,33 @@ export class NgRxEventBusService {
     * @param defaultValue is option if data passed BehaviorSubject type has been considered else Subject type.
     */
   registerEvent(event: IEvent, defaultValue?: unknown) {
-    if (this.checkEventRegister(event)) {
+    let eventRegister = this.eventRegister.get(event);
+    if (eventRegister && eventRegister.unRegister === false) {
       throw `${event} event already registered`;
+    }else if(eventRegister && eventRegister.unRegister){
+      eventRegister.unRegister = false;
+      return;
     }
-
-    this.eventRegister.push({ event: event, subject: defaultValue ? new BehaviorSubject(defaultValue) : new Subject() });
+    eventRegister = {
+      event: event,
+      subject: defaultValue ? new BehaviorSubject(defaultValue) : new Subject()
+    };
+    this.eventRegister.set(event, eventRegister);
   }
 
   /**
     * unregister the event.
     * @param event should be IEvent type.
-    */
-  unregisterEvent(event: IEvent): boolean {
-    let $index = this.getRegisteredEventIndex(event);
-    if ($index > -1) {
-      this.eventRegister[$index].subject.unsubscribe();
-      this.eventRegister.splice($index, 1);
+  */
+  unregisterEvent(event: IEvent, soft: boolean = false): boolean {
+    const eventRegister = this.eventRegister.get(event);
+    if (eventRegister) {
+      if (soft) {
+        eventRegister.unRegister = true;
+      } else {
+        eventRegister.subject.unsubscribe();
+        this.eventRegister.delete(event);
+      }
       return true;
     }
     return false;
@@ -51,11 +62,12 @@ export class NgRxEventBusService {
      * @param emittedValue by the event based on selected enum.
   */
   on(event: IEvent, action: any, emittedValue?: EmitRecord): Subscription {
-    let $subject = this.checkEventRegister(event);
-    if (!$subject) {
-      $subject = { event: event, subject: new Subject() };
-      this.eventRegister.push($subject);
+    const eventRegister = this.eventRegister.get(event);
+    if (!eventRegister) {
+      const $subject = { event: event, subject: new Subject() };
+      this.eventRegister.set(event, $subject);
     }
+
     if (this.eventLastEmitted[event as string] && emittedValue) {
       let response;
       const eventName = event as string;
@@ -71,10 +83,10 @@ export class NgRxEventBusService {
           break;
       }
       setTimeout((data) => {
-        $subject.subject.next(data);
+        eventRegister.subject.next(data);
       }, 0, response);
     }
-    return $subject.subject.subscribe(action);
+    return eventRegister.subject.subscribe(action);
   }
 
   /**
@@ -83,31 +95,16 @@ export class NgRxEventBusService {
      * @param event should be EmitEvent type.
   */
   emit(event: EmitEvent) {
-    let $subject = this.checkEventRegister(event.name);
-    if (!$subject) {
-      $subject = { event: event.name, subject: new BehaviorSubject(event.value) };
-      this.eventRegister.push($subject);
-    }else{
-      $subject.subject.next(event.value);
+    const eventRegister = this.eventRegister.get(event.name);
+    if (!eventRegister) {
+      const $subject = { event: event.name, subject: new BehaviorSubject(event.value) };
+      this.eventRegister.set(event.name, $subject);
+    } else if (eventRegister.unRegister) {
+      return;
     }
+    eventRegister.subject.next(event.value);
     this.eventLastEmitted[event.name as string] = this.eventLastEmitted[event.name as string] || [];
     this.eventLastEmitted[event.name as string].push(event.value);
-  }
-  //#endregion
-
-  //#region Private
-  private checkEventRegister(event: IEvent) {
-    return this.eventRegister.find((item: IEventRegister) => {
-      return event === item.event;
-    });
-  }
-  private getRegisteredEventIndex(event: IEvent): number {
-    let index = -1;
-    const resp = this.eventRegister.find((item: IEventRegister,_index:number) => {
-      index = _index;
-      return event === item.event;
-    });
-    return index;
   }
   //#endregion
 }

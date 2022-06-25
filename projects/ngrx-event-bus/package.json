@@ -1,6 +1,6 @@
 {
     "name": "ngrx-event-bus",
-    "version": "2.1.4",
+    "version": "2.1.5",
     "description": "Angular and RxJs event bus with Mediator Pattern",
     "author": "Abhishek Joshi aka PixelByAJ",
     "repository": {

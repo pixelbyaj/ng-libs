@@ -1,2 +1,4 @@
 <span>{{ title }} app is running!</span>
-<input type="text" [value]="title" (change)="change($event)"/>
+<input type="text" [value]="title" (change)="change($event)" title="Name"/>
+<button (click)="Register()">Register</button>
+<button (click)="UnRegister()">UnRegister</button>
