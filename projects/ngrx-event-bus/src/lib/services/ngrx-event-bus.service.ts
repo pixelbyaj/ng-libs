@@ -62,10 +62,10 @@ export class NgRxEventBusService {
      * @param emittedValue by the event based on selected enum.
   */
   on(event: IEvent, action: any, emittedValue?: EmitRecord): Subscription {
-    const eventRegister = this.eventRegister.get(event);
+    let eventRegister = this.eventRegister.get(event);
     if (!eventRegister) {
-      const $subject = { event: event, subject: new Subject() };
-      this.eventRegister.set(event, $subject);
+      eventRegister = { event: event, subject: new Subject() };
+      this.eventRegister.set(event, eventRegister);
     }
 
     if (this.eventLastEmitted[event as string] && emittedValue) {
@@ -95,10 +95,10 @@ export class NgRxEventBusService {
      * @param event should be EmitEvent type.
   */
   emit(event: EmitEvent) {
-    const eventRegister = this.eventRegister.get(event.name);
+    let eventRegister = this.eventRegister.get(event.name);
     if (!eventRegister) {
-      const $subject = { event: event.name, subject: new BehaviorSubject(event.value) };
-      this.eventRegister.set(event.name, $subject);
+      eventRegister = { event: event.name, subject: new BehaviorSubject(event.value) };
+      this.eventRegister.set(event.name, eventRegister);
     } else if (eventRegister.unRegister) {
       return;
     }
