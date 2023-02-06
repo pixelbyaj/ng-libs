@@ -7,7 +7,7 @@ You can publish events to a bus and any component can subscribe the events. Subs
 [![npm](https://img.shields.io/github/license/pixelbyaj/ngrx-event-bus.svg)](https://github.com/pixelbyaj/ngrx-event-bus/blob/master/LICENSE)
 
 
-This library was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.3.29.
+This library was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.0.3 and support V15.
 
 ## [Live Demo](https://angular-ngrxeventbus.stackblitz.io)
 ## How to consume
